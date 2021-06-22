@@ -7,7 +7,7 @@ namespace RomanNumeralConverter.Model
 {
     public class NumeralsModel
     {
-        public string Arabic { get; set; }
+        public long Arabic { get; set; }
         public string Roman { get; set; }
     }
 }

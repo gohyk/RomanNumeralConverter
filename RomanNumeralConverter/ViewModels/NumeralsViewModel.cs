@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using RomanNumeralConverter.Model;
 
 namespace RomanNumeralConverter.ViewModels
@@ -13,14 +14,29 @@ namespace RomanNumeralConverter.ViewModels
      
         public string Arabic
         {
-            get { return numeralsModel.Arabic; }
-            set { numeralsModel.Arabic = value; OnPropertyChanged("Arabic"); }
+            get
+            {
+                return (numeralsModel.Arabic != 0)? numeralsModel.Arabic.ToString() : "";
+            }
+
+            set 
+            {
+                numeralsModel.Arabic = (value != "") ? Int64.Parse(value) : 0;
+                OnPropertyChanged("Arabic");
+            }
         }
 
         public string Roman
         {
-            get { return numeralsModel.Roman; }
-            set { numeralsModel.Roman = value; OnPropertyChanged("Roman"); }
+            get 
+            { 
+                return numeralsModel.Roman; 
+            }
+
+            set 
+            { 
+                numeralsModel.Roman = value; OnPropertyChanged("Roman"); 
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
