@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Text.RegularExpressions;
 using RomanNumeralConverter.Model;
 
 namespace RomanNumeralConverter.ViewModels
@@ -12,7 +13,8 @@ namespace RomanNumeralConverter.ViewModels
         {
             numeralsModel = new NumeralsModel();
         }
-     
+
+        Regex arabicRegex = new Regex(@"^[0-4]?\d{0,3}$");
         public string Arabic
         {
             get
@@ -22,6 +24,11 @@ namespace RomanNumeralConverter.ViewModels
 
             set 
             {
+                if (!arabicRegex.IsMatch(value))
+                {
+                    return;
+                }
+
                 numeralsModel.Arabic = (value != "") ? Int64.Parse(value) : 0;
                 numeralsModel.Roman = ArabicToRoman(numeralsModel.Arabic);
                 OnPropertyChanged(nameof(Roman));
@@ -29,6 +36,7 @@ namespace RomanNumeralConverter.ViewModels
             }
         }
 
+        Regex romanRegex = new Regex(@"^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$");
         public string Roman
         {
             get 
@@ -38,6 +46,11 @@ namespace RomanNumeralConverter.ViewModels
 
             set 
             {
+                if (!romanRegex.IsMatch(value.ToUpper()))
+                {
+                    return;
+                }
+
                 numeralsModel.Roman = value.ToUpper();
                 numeralsModel.Arabic = RomanToArabic(numeralsModel.Roman);
                 OnPropertyChanged(nameof(Arabic));
