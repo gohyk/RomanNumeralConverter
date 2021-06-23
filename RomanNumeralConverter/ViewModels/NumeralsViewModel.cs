@@ -61,31 +61,30 @@ namespace RomanNumeralConverter.ViewModels
 
         private string ArabicToRoman(long num)
         {
-            
             var result = new List<string>();
-            var ValToSymbol = new Dictionary<int, string>
+            var SymbolToVal = new Dictionary<string, int>
             {
-                { 1000, "M" },
-                { 900, "CM" },
-                { 500, "D" },
-                { 400, "CD" },
-                { 100, "C" },
-                { 90, "XC" },
-                { 50, "L" },
-                { 40, "XL" },
-                { 10, "X" },
-                { 9, "IX" },
-                { 5, "V" },
-                { 4, "IV" },
-                { 1, "I" },
+                { "M" , 1000 },
+                { "CM", 900 },
+                { "D" , 500 },
+                { "CD", 400 },
+                { "C" , 100 },
+                { "XC", 90 },
+                { "L" , 50 },
+                { "XL", 40 },
+                { "X" , 10 },
+                { "IX", 9 },
+                { "V" , 5 },
+                { "IV", 4 },
+                { "I" , 1 },
             };
 
-            foreach (var pair in ValToSymbol)
+            foreach (var pair in SymbolToVal)
             {
-                while (num >= pair.Key)
+                while (num >= pair.Value)
                 {
-                    result.Add(pair.Value);
-                    num -= pair.Key;
+                    result.Add(pair.Key);
+                    num -= pair.Value;
                 }
             }
 
