@@ -23,7 +23,8 @@ namespace RomanNumeralConverter.ViewModels
             set 
             {
                 numeralsModel.Arabic = (value != "") ? Int64.Parse(value) : 0;
-                Roman = ArabicToRoman(numeralsModel.Arabic);
+                numeralsModel.Roman = ArabicToRoman(numeralsModel.Arabic);
+                OnPropertyChanged(nameof(Roman));
                 OnPropertyChanged(nameof(Arabic));
             }
         }
@@ -37,7 +38,9 @@ namespace RomanNumeralConverter.ViewModels
 
             set 
             {
-                numeralsModel.Roman = value;
+                numeralsModel.Roman = value.ToUpper();
+                numeralsModel.Arabic = RomanToArabic(numeralsModel.Roman);
+                OnPropertyChanged(nameof(Arabic));
                 OnPropertyChanged(nameof(Roman));
             }
         }
@@ -73,6 +76,28 @@ namespace RomanNumeralConverter.ViewModels
             }
 
             return String.Concat(result);
+        }
+        
+        private long RomanToArabic(string letter)
+        {
+            long result = 0;
+            var SymbolToVar = new Dictionary<char, int>
+            {
+                { 'M' , 1000 },
+                { 'D' , 500 },
+                { 'C' , 100 },
+                { 'L' , 50 },
+                { 'X' , 10 },
+                { 'V' , 5 },
+                { 'I' , 1 },
+            };
+
+            foreach (var ch in letter)
+            {
+                result += SymbolToVar[ch];
+            }
+
+            return result;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
