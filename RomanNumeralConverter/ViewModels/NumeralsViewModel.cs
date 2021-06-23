@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using RomanNumeralConverter.Model;
 
@@ -29,7 +30,7 @@ namespace RomanNumeralConverter.ViewModels
                     return;
                 }
 
-                numeralsModel.Arabic = (value != "") ? Int64.Parse(value) : 0;
+                numeralsModel.Arabic = (value != "") ? Int32.Parse(value) : 0;
                 numeralsModel.Roman = ArabicToRoman(numeralsModel.Arabic);
                 OnPropertyChanged(nameof(Roman));
                 OnPropertyChanged(nameof(Arabic));
@@ -91,10 +92,10 @@ namespace RomanNumeralConverter.ViewModels
             return String.Concat(result);
         }
         
-        private long RomanToArabic(string letter)
+        private int RomanToArabic(string letter)
         {
-            long result = 0;
-            var SymbolToVar = new Dictionary<char, int>
+            int result = 0;
+            var SymbolToVal = new Dictionary<char, int>
             {
                 { 'M' , 1000 },
                 { 'D' , 500 },
@@ -105,9 +106,17 @@ namespace RomanNumeralConverter.ViewModels
                 { 'I' , 1 },
             };
 
-            foreach (var ch in letter)
+            for (int i=0; i < letter.Length; ++i)
             {
-                result += SymbolToVar[ch];
+                // To handle subtractive notations such as CM
+                if (i+1 < letter.Length && SymbolToVal[letter[i]] < SymbolToVal[letter[i+1]])
+                {
+                    result += SymbolToVal[letter[i + 1]] - SymbolToVal[letter[i]];
+                    i++; // To skip next character
+                    continue;
+                }
+
+                result += SymbolToVal[letter[i]];
             }
 
             return result;
