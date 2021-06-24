@@ -1,4 +1,4 @@
-﻿namespace RomanNumeralConverter.Model
+﻿namespace RomanNumeralConverter.Models
 {
     public class NumeralsModel
     {

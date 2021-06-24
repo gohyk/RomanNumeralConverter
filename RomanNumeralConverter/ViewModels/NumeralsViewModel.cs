@@ -2,63 +2,58 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
-using RomanNumeralConverter.Model;
+using RomanNumeralConverter.Models;
 
 namespace RomanNumeralConverter.ViewModels
 {
     public class NumeralsViewModel : INotifyPropertyChanged
     {
-        private NumeralsModel numeralsModel;
-        public NumeralsViewModel()
-        {
-            numeralsModel = new NumeralsModel();
-        }
-
-        Regex arabicRegex = new Regex(@"^[0-4]?\d{0,3}$");
+        private readonly NumeralsModel _numeralsModel;
+        private readonly Regex _arabicRegex = new Regex(@"^[0-4]?\d{0,3}$");
+        private readonly Regex _romanRegex = new Regex(@"^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$");
+        
         public string Arabic
         {
-            get
-            {
-                return (numeralsModel.Arabic != 0)? numeralsModel.Arabic.ToString() : "";
-            }
+            get => (_numeralsModel.Arabic != 0)? _numeralsModel.Arabic.ToString() : "";
 
             set 
             {
-                if (!arabicRegex.IsMatch(value))
+                if (!_arabicRegex.IsMatch(value))
                 {
                     return;
                 }
 
-                numeralsModel.Arabic = (value != "") ? Int32.Parse(value) : 0;
-                numeralsModel.Roman = ArabicToRoman(numeralsModel.Arabic);
+                _numeralsModel.Arabic = (value != "") ? int.Parse(value) : 0;
+                _numeralsModel.Roman = ArabicToRoman(_numeralsModel.Arabic);
                 OnPropertyChanged(nameof(Roman));
                 OnPropertyChanged(nameof(Arabic));
             }
         }
-
-        Regex romanRegex = new Regex(@"^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$");
+        
         public string Roman
         {
-            get 
-            {
-                return numeralsModel.Roman; 
-            }
+            get => _numeralsModel.Roman;
 
             set 
             {
-                if (!romanRegex.IsMatch(value.ToUpper()))
+                if (!_romanRegex.IsMatch(value.ToUpper()))
                 {
                     return;
                 }
 
-                numeralsModel.Roman = value.ToUpper();
-                numeralsModel.Arabic = RomanToArabic(numeralsModel.Roman);
+                _numeralsModel.Roman = value.ToUpper();
+                _numeralsModel.Arabic = RomanToArabic(_numeralsModel.Roman);
                 OnPropertyChanged(nameof(Arabic));
                 OnPropertyChanged(nameof(Roman));
             }
         }
-
-        private string ArabicToRoman(long num)
+        
+        public NumeralsViewModel()
+        {
+            _numeralsModel = new NumeralsModel();
+        }
+        
+        private static string ArabicToRoman(long num)
         {
             var result = new List<string>();
             var symbolToVal = new Dictionary<string, int>
@@ -78,21 +73,21 @@ namespace RomanNumeralConverter.ViewModels
                 { "I" , 1 },
             };
 
-            foreach (var pair in symbolToVal)
+            foreach (var (symbol, value) in symbolToVal)
             {
-                while (num >= pair.Value)
+                while (num >= value)
                 {
-                    result.Add(pair.Key);
-                    num -= pair.Value;
+                    result.Add(symbol);
+                    num -= value;
                 }
             }
 
-            return String.Concat(result);
+            return string.Concat(result);
         }
         
-        private int RomanToArabic(string letter)
+        private static int RomanToArabic(string letter)
         {
-            int result = 0;
+            var result = 0;
             var symbolToVal = new Dictionary<char, int>
             {
                 { 'M' , 1000 },
@@ -104,13 +99,13 @@ namespace RomanNumeralConverter.ViewModels
                 { 'I' , 1 },
             };
 
-            for (int i=0; i < letter.Length; ++i)
+            for (var i=0; i < letter.Length; ++i)
             {
                 // To handle subtractive notations such as CM
                 if (i+1 < letter.Length && symbolToVal[letter[i]] < symbolToVal[letter[i+1]])
                 {
-                    result += symbolToVal[letter[i + 1]] - symbolToVal[letter[i]];
-                    i++; // To skip next character
+                    result += symbolToVal[letter[i+1]] - symbolToVal[letter[i]];
+                    ++i; // To skip next character
                     continue;
                 }
 
@@ -123,8 +118,7 @@ namespace RomanNumeralConverter.ViewModels
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string propertyName)
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
