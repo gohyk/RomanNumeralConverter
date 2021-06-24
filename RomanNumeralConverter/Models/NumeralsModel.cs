@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.ComponentModel;
-
-namespace RomanNumeralConverter.Model
+﻿namespace RomanNumeralConverter.Model
 {
     public class NumeralsModel
     {

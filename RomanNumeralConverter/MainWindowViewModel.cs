@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using RomanNumeralConverter.ViewModels;
+﻿using RomanNumeralConverter.ViewModels;
 
 namespace RomanNumeralConverter
 {
